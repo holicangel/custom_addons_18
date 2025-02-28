@@ -1,0 +1,148 @@
+<section class="oe_container">
+	<div class="oe_row oe_spaced">
+		<h2 class="oe_slogan" style="color: #7c7bad;font-size:35px;font-weight:bolder;">Base for Gantt view</h2>
+		<div>
+            <p style="text-align: center;">
+                This module provides the foundation for a gantt chart and was created for the Odoo community edition. This module has a project Gantt view.
+            </p>
+        </div>
+	</div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h4 class="oe_slogan" style="color: #7c7bad;font-size:35px;font-weight:bolder;">Installation</h4>
+        <div class="oe_span12">
+            <p><strong>- Copy web_project_gantt module to addons folder</strong></p>
+            <p><strong>- Install the module normally like other modules</strong></p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h4 class="oe_slogan" style="color: #7c7bad;font-size:35px;font-weight:bolder;">Features</h4>
+        <div class="oe_span12">
+            <br/>
+            <ul>
+                <li> Task Drag and Drop</li>
+                <li> Task Color</li>
+            </ul>            
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h4 class="oe_slogan" style="color: #7c7bad;font-size:35px;font-weight:bolder;">1. Configuration</h4>        
+        <div class="oe_span12">            
+            <p>1. Add Start Date, End Date and Color fields to themodel. (Mandatory fields are Stat Date, End Date and Color Field)</p>
+            <br/>
+            <div class="oe_row_img  oe_screenshot oe_centered">
+                <pre style="text-align: justify; line-height: 1.4;">
+                    <span style="font-family: Verdana; color: rgb(66, 66, 66);">
+                        from odoo import api, fields, models, _
+                        <br/>
+                        class ViewGanttProjectTak(models.Model):
+                            _inherit = 'project.task'
+                            <br/>
+                            date_from = fields.Datetime(string='Planned start', index=True, copy=False)
+                            date_to = fields.Datetime(string='Planned stop', index=True, copy=False)
+                            color = fields.Integer('Task color', default=4)
+                            <br/>
+
+                            @api.onchange('date_to')
+                            def onchange_gantt_stop_date(self):
+                                if self.date_from and self.date_to and self.date_to  &lt; self.date_from:
+                                    self.date_to = self.date_from
+                    </span>
+                </pre>
+            </div>
+            
+            </br>
+
+            <p>2. Add a new view for gantt view.</p>            
+            <br/>
+            <div class="oe_row_img  oe_screenshot oe_centered">
+                <pre style="text-align: justify; line-height: 1.4;">
+                    <span style="font-family: Verdana; color: rgb(66, 66, 66);">                       
+                        &lt;record id="view_task_gantt" model="ir.ui.view"&gt;
+                            &lt;field name="name"&gt;project.task.gantt&lt;/field&gt;
+                            &lt;field name="model"&gt;project.task&lt;/field&gt;
+                            &lt;field eval="0" name="priority"&gt;
+                            &lt;field name="arch" type="xml"/&gt;
+                                &lt;ganttview 
+                                    start_date="date_from" 
+                                    stop_date="date_to"  
+                                    color="color"
+                                    parent_id="parent_id"
+                                    user_ids="user_ids"                           
+                                &gt;
+                                &lt;/ganttview&gt;
+                            &lt;/field&gt;
+                        &lt;/record&gt;
+                    </span>
+                </pre>
+            </div>
+            </br>
+
+            <p>3. Add new fields to the Form View.</p>            
+            <br/>
+            <div class="oe_row_img  oe_screenshot oe_centered">
+                <pre style="text-align: justify; line-height: 1.4;">
+                    <span style="font-family: Verdana; color: rgb(66, 66, 66);">
+                        &lt;record id="view_task_form2_inherit" model="ir.ui.view"&gt;
+                            &lt;field name="name"&gt;project.task.form&lt;/field&gt;
+                            &lt;field name="model"&gt;project.task&lt;/field&gt;
+                            &lt;field name="inherit_id" ref="project.view_task_form2"/&gt;
+                            &lt;field eval="0" name="priority"/&gt;
+                            &lt;field name="arch" type="xml"&gt;
+                                &lt;field name="partner_id" position="before"&gt;
+                                    &lt;field name="date_from"/&gt;
+                                    &lt;field name="date_to"/&gt;                
+                                    &lt;field name="color" widget="color_picker"/&gt;
+                                &lt;/field&gt;
+                            &lt;/field&gt;
+                        &lt;/record&gt;
+                    </span>
+                </pre>
+            </div>
+            </br>
+
+            <p>4. Add action to the Gantt View.</p>            
+            <br/>
+            <div class="oe_row_img  oe_screenshot oe_centered">
+                <pre style="text-align: justify; line-height: 1.4;">
+                    <span style="font-family: Verdana; color: rgb(66, 66, 66);">
+                        &lt;record id="project.action_view_all_task" model="ir.actions.act_window"/&gt;
+                            &lt;field name="view_mode"/&gt;tree,kanban,form,calendar,pivot,graph,activity,ganttview&lt;/field/&gt;
+                        &lt;/record/&gt;
+                    </span>
+                </pre>
+            </div>
+            </br>
+        </div>
+
+        <div class="oe_span12">
+            <p>Gantt View</p>
+            </br>
+            <div class="oe_row_img  oe_screenshot oe_centered">
+                <img style="border:10px solid white; width: 100% !important" src="1.png">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <h3 class="oe_slogan">Help and Support</h3>
+    <div class="oe_slogan">
+        <a class="btn btn-primary btn-lg mt8" href="mailto:cfinfosolutions@gmail.com">
+            <i class="fa fa-envelope"></i> Email
+        </a>
+        <a class="btn btn-primary btn-lg mt8" href="http://www.cfis.store/">
+            <i class="fa fa-phone"></i> Contact Us
+        </a>
+        <a class="btn btn-primary btn-lg mt8" href="http://www.cfis.store/">
+            <i class="fa fa-check-square"></i> Request Customization </a>
+    </div>
+</section>
